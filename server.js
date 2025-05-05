@@ -10,7 +10,7 @@ app.use(cors()); // Allows requests from your mobile app
 
 app.post("/create-payment-intent", async (req, res) => {
     try {
-        const { amount } = req.body; // Receive amount from the mobile app
+        const { amount } = req.body;
 
         const customer = await stripe.customers.create();
         const ephemeralKey = await stripe.ephemeralKeys.create(
@@ -18,9 +18,10 @@ app.post("/create-payment-intent", async (req, res) => {
             { apiVersion: "2023-10-16" }
         );
 
+        // Force PHP currency in test mode
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: amount, // Amount in cents
-            currency: "usd",
+            amount: amount, // Amount in centavos (₱20.00 = 2000)
+            currency: "php", // Override default USD
             customer: customer.id,
         });
 
